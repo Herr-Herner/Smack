@@ -19,19 +19,19 @@ package org.jivesoftware.smack.tcp.sm.predicates;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 
-public class ForEveryTypeOrAfterXStanzas implements PacketFilter {
+public class ForMatchingPredicateOrAfterXStanzas implements PacketFilter {
 
-    private final Class<? extends Packet> type;
+    private final PacketFilter predicate;
     private final AfterXStanzas afterXStanzas;
 
-    public ForEveryTypeOrAfterXStanzas(Class<? extends Packet> type, int count) {
-        this.type = type;
+    public ForMatchingPredicateOrAfterXStanzas(PacketFilter predicate, int count) {
+        this.predicate = predicate;
         this.afterXStanzas = new AfterXStanzas(count);
     }
 
     @Override
     public boolean accept(Packet packet) {
-        if (type.isAssignableFrom(packet.getClass())) {
+        if (predicate.accept(packet)) {
             afterXStanzas.resetCounter();
             return true;
         }

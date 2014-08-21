@@ -65,7 +65,7 @@ import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.Failed;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.Resume;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.Resumed;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.StreamManagementFeature;
-import org.jivesoftware.smack.tcp.sm.predicates.ForEveryStanza;
+import org.jivesoftware.smack.tcp.sm.predicates.Predicate;
 import org.jivesoftware.smack.tcp.sm.provider.ParseStreamManagement;
 import org.jivesoftware.smack.util.ArrayBlockingQueueWithShutdown;
 import org.jivesoftware.smack.util.PacketParserUtils;
@@ -418,7 +418,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                     // Assure that we have at lest one predicate set up that so that we request acks
                     // for the server and eventually flush some stanzas from the unacknowledged
                     // stanza queue
-                    requestAckPredicates.add(ForEveryStanza.INSTANCE);
+                    requestAckPredicates.add(Predicate.forMessagesOrAfter5Stanzas());
                 }
             }
         }

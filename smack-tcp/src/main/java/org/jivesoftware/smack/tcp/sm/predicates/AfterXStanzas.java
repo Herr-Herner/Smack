@@ -33,10 +33,14 @@ public class AfterXStanzas implements PacketFilter {
     public synchronized boolean accept(Packet packet) {
         currentCount++;
         if (currentCount == count) {
-            currentCount = 0;
+            resetCounter();
             return true;
         }
         return false;
+    }
+
+    public synchronized void resetCounter() {
+        currentCount = 0;
     }
 
     public static AfterXStanzas whereXisFive() {

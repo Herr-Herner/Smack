@@ -21,6 +21,7 @@ import java.math.BigInteger;
 public class SMUtils {
 
     private static long TWO_POWER_THIRTYTWO = BigInteger.ONE.shiftLeft(32).longValue();
+    private static long TWO_POWER_THIRTYTWO_MINUS_ONE = TWO_POWER_THIRTYTWO - 1;
 
     /**
      * Quoting XEP-198 4.:
@@ -37,5 +38,22 @@ public class SMUtils {
             height = 0;
         }
         return height;
+    }
+
+    /**
+     * Calculates the delta of the last known stanza handled count and the new
+     * reported stanza handled count while considering that the new value may be
+     * wrapped after 2^32-1.
+     * 
+     * @param reportedHandledCount
+     * @param lastKnownHandledCount
+     * @return the delta
+     */
+    public static long calculateDelta(long reportedHandledCount, long lastKnownHandledCount) {
+        if (reportedHandledCount >= lastKnownHandledCount) {
+            // There was no overflow, we can safely subtract
+            return reportedHandledCount - lastKnownHandledCount;
+        }
+        return (TWO_POWER_THIRTYTWO_MINUS_ONE - lastKnownHandledCount) + reportedHandledCount;
     }
 }

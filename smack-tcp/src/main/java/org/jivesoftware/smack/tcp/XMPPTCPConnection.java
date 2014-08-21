@@ -1553,7 +1553,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
     }
 
     private void processHandledCount(long handledCount) throws NotConnectedException {
-        long ackedStanzasCount = handledCount - serverHandledStanzasCount;
+        long ackedStanzasCount = SMUtils.calculateDelta(handledCount, serverHandledStanzasCount);
         List<Packet> ackedStanzas = new ArrayList<Packet>(
                         handledCount <= Integer.MAX_VALUE ? (int) handledCount
                                         : Integer.MAX_VALUE);

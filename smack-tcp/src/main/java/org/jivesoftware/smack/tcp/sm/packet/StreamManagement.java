@@ -123,16 +123,30 @@ public class StreamManagement {
         }
     }
 
+    /**
+     * A Stream Management 'enabled' element.
+     * <p>
+     * Here is a full example, all attributes besides 'xmlns' are optional.
+     * </p>
+     * <pre>
+     * {@code
+     * <enabled xmlns='urn:xmpp:sm:3'
+     *      id='some-long-sm-id'
+     *      location='[2001:41D0:1:A49b::1]:9222'
+     *      resume='true'/>
+     * }
+     * </pre>
+     */
     public static class Enabled extends AbstractEnable {
         public static final String ELEMENT = "enabled";
 
         /**
-         * TODO javadoc
+         * The stream id ("SM-ID")
          */
         private final String id;
 
         /**
-         * TODO javadoc
+         * The location where the server prefers reconnection.
          */
         private final String location;
 

@@ -50,7 +50,7 @@ public class StreamManagement {
         }
     }
 
-    public static abstract class AbstractEnable extends FullStreamElement {
+    private static abstract class AbstractEnable extends FullStreamElement {
 
         /**
          * Preferred maximum resumption time in seconds (optional).

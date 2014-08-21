@@ -952,6 +952,7 @@ public class Roster {
 
         @Override
         public void processPacket(Packet packet) {
+            LOGGER.fine("RosterResultListener received stanza");
             Collection<String> addedEntries = new ArrayList<String>();
             Collection<String> updatedEntries = new ArrayList<String>();
             Collection<String> deletedEntries = new ArrayList<String>();

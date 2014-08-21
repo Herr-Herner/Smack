@@ -206,8 +206,12 @@ public class XmlStringBuilder implements Appendable, CharSequence {
     }
 
     public XmlStringBuilder prelude(PacketExtension pe) {
-        halfOpenElement(pe.getElementName());
-        xmlnsAttribute(pe.getNamespace());
+        return prelude(pe.getElementName(), pe.getNamespace());
+    }
+
+    public XmlStringBuilder prelude(String element, String namespace) {
+        halfOpenElement(element);
+        xmlnsAttribute(namespace);
         return this;
     }
 

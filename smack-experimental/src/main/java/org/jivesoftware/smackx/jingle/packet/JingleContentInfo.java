@@ -17,7 +17,6 @@
 package org.jivesoftware.smackx.jingle.packet;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smackx.jingleold.media.ContentInfo;
 
 /**
  * Jingle content info

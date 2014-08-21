@@ -16,11 +16,6 @@
  */
 package org.jivesoftware.smackx.jingle.nat;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.logging.Logger;
-
 /**
  * ICE Transport candidate.
  * <p/>
@@ -30,8 +25,6 @@ import java.util.logging.Logger;
  * @author Thiago Camargo
  */
 public class ICECandidate extends TransportCandidate implements Comparable<ICECandidate> {
-
-	private static final Logger LOGGER = Logger.getLogger(ICECandidate.class.getName());
 
 	private String id; // An identification
 
@@ -211,86 +204,86 @@ public class ICECandidate extends TransportCandidate implements Comparable<ICECa
         this.type = type;
     }
 
-    /**
-     * Check if a transport candidate is usable. The transport resolver should
-     * check if the transport candidate the other endpoint has provided is
-     * usable.
-     * <p/>
-     * ICE Candidate can check connectivity using UDP echo Test.
-     */
-    public void check(final List<TransportCandidate> localCandidates) {
-        //TODO candidate is being checked trigger
-        //candidatesChecking.add(cand);
-
-        final ICECandidate checkingCandidate = this;
-
-        Thread checkThread = new Thread(new Runnable() {
-            public void run() {
-
-                final TestResult result = new TestResult();
-
-                // Media Proxy don't have Echo features.
-                // If its a relayed candidate we assumpt that is NOT Valid while other candidates still being checked.
-                // The negotiator MUST add then in the correct situations
-                if (getType().equals("relay")) {
-                    triggerCandidateChecked(false);
-                    return;
-                }
-
-                ResultListener resultListener = new ResultListener() {
-                    public void testFinished(TestResult testResult, TransportCandidate candidate) {
-                        if (testResult.isReachable() && checkingCandidate.equals(candidate)) {
-                            result.setResult(true);
-                            LOGGER.fine("Candidate reachable: " + candidate.getIp() + ":" + candidate.getPort() + " from " + getIp() +":" + getPort());
-                        }
-                    }
-                };
-
-                for (TransportCandidate candidate : localCandidates) {
-                    CandidateEcho echo = candidate.getCandidateEcho();
-                    if (echo != null) {
-                        if (candidate instanceof ICECandidate) {
-                            ICECandidate iceCandidate = (ICECandidate) candidate;
-                            if (iceCandidate.getType().equals(getType())) {
-                                try {
-                                    echo.addResultListener(resultListener);
-                                    InetAddress address = InetAddress.getByName(getIp());
-                                    echo.testASync(checkingCandidate, getPassword());
-                                }
-                                catch (UnknownHostException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (int i = 0; i < 10 && !result.isReachable(); i++)
-                    try {
-                        LOGGER.severe("ICE Candidate retry #" + i);
-                        Thread.sleep(400);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                for (TransportCandidate candidate : localCandidates) {
-                    CandidateEcho echo = candidate.getCandidateEcho();
-                    if (echo != null) {
-                        echo.removeResultListener(resultListener);
-                    }
-                }
-
-                triggerCandidateChecked(result.isReachable());
-
-                //TODO candidate is being checked trigger
-                //candidatesChecking.remove(cand);
-            }
-        }, "Transport candidate check");
-
-        checkThread.setName("Transport candidate test");
-        checkThread.start();
-    }
+//    /**
+//     * Check if a transport candidate is usable. The transport resolver should
+//     * check if the transport candidate the other endpoint has provided is
+//     * usable.
+//     * <p/>
+//     * ICE Candidate can check connectivity using UDP echo Test.
+//     */
+//    public void check(final List<TransportCandidate> localCandidates) {
+//        //TODO candidate is being checked trigger
+//        //candidatesChecking.add(cand);
+//
+//        final ICECandidate checkingCandidate = this;
+//
+//        Thread checkThread = new Thread(new Runnable() {
+//            public void run() {
+//
+//                final TestResult result = new TestResult();
+//
+//                // Media Proxy don't have Echo features.
+//                // If its a relayed candidate we assumpt that is NOT Valid while other candidates still being checked.
+//                // The negotiator MUST add then in the correct situations
+//                if (getType().equals("relay")) {
+//                    triggerCandidateChecked(false);
+//                    return;
+//                }
+//
+//                ResultListener resultListener = new ResultListener() {
+//                    public void testFinished(TestResult testResult, TransportCandidate candidate) {
+//                        if (testResult.isReachable() && checkingCandidate.equals(candidate)) {
+//                            result.setResult(true);
+//                            LOGGER.fine("Candidate reachable: " + candidate.getIp() + ":" + candidate.getPort() + " from " + getIp() +":" + getPort());
+//                        }
+//                    }
+//                };
+//
+//                for (TransportCandidate candidate : localCandidates) {
+//                    CandidateEcho echo = candidate.getCandidateEcho();
+//                    if (echo != null) {
+//                        if (candidate instanceof ICECandidate) {
+//                            ICECandidate iceCandidate = (ICECandidate) candidate;
+//                            if (iceCandidate.getType().equals(getType())) {
+//                                try {
+//                                    echo.addResultListener(resultListener);
+//                                    InetAddress address = InetAddress.getByName(getIp());
+//                                    echo.testASync(checkingCandidate, getPassword());
+//                                }
+//                                catch (UnknownHostException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                for (int i = 0; i < 10 && !result.isReachable(); i++)
+//                    try {
+//                        LOGGER.severe("ICE Candidate retry #" + i);
+//                        Thread.sleep(400);
+//                    }
+//                    catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                for (TransportCandidate candidate : localCandidates) {
+//                    CandidateEcho echo = candidate.getCandidateEcho();
+//                    if (echo != null) {
+//                        echo.removeResultListener(resultListener);
+//                    }
+//                }
+//
+//                triggerCandidateChecked(result.isReachable());
+//
+//                //TODO candidate is being checked trigger
+//                //candidatesChecking.remove(cand);
+//            }
+//        }, "Transport candidate check");
+//
+//        checkThread.setName("Transport candidate test");
+//        checkThread.start();
+//    }
 
     /*
     * (non-Javadoc)

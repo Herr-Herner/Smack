@@ -17,8 +17,8 @@
 package org.jivesoftware.smackx.jingle.packet;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smackx.jingleold.nat.ICECandidate;
-import org.jivesoftware.smackx.jingleold.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingle.nat.ICECandidate;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 
 import java.util.ArrayList;
 import java.util.Collections;

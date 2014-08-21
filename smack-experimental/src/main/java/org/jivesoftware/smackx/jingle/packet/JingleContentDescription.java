@@ -17,7 +17,6 @@
 package org.jivesoftware.smackx.jingle.packet;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smackx.jingleold.media.PayloadType;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -25,7 +25,7 @@ import org.jivesoftware.smackx.jingle.packet.JingleContent;
 import org.jivesoftware.smackx.jingle.packet.JingleContentInfo;
 import org.jivesoftware.smackx.jingle.packet.JingleDescription;
 import org.jivesoftware.smackx.jingle.packet.JingleTransport;
-import org.jivesoftware.smackx.jingleold.JingleActionEnum;
+import org.jivesoftware.smackx.jingle.packet.JingleActionEnum;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
@@ -115,7 +115,7 @@ public class JingleProvider implements IQProvider {
                 }
 
             } else if (eventType == XmlPullParser.END_TAG) {
-                if (parser.getName().equals(Jingle.getElementName())) {
+                if (parser.getName().equals(Jingle.ELEMENT)) {
                     done = true;
                 }
             }

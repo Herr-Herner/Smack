@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smackx.jingleold.media.PayloadType;
 
 /**
  * Jingle content description.

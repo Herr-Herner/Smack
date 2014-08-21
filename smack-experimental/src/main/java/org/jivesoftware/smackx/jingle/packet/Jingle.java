@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2003-2007 Jive Software.
+ * Copyright 2003-2007 Jive Software, 2014 Florian Schmaus
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 package org.jivesoftware.smackx.jingle.packet;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smackx.jingle.JingleActionEnum;
+import org.jivesoftware.smack.util.XmlStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,11 +40,9 @@ import java.util.List;
  */
 public class Jingle extends IQ {
 
-    public static final String NAMESPACE = "urn:xmpp:tmp:jingle";
+    public static final String NAMESPACE = "urn:xmpp:jingle:1";
 
     public static final String ELEMENT = "jingle";
-
-    // non-static
 
     private String sid; // The session id
 
@@ -55,7 +53,7 @@ public class Jingle extends IQ {
     private String responder; // The responder
 
     // Sub-elements of a Jingle object.
-    
+
     private final List<JingleContent> contents = new ArrayList<JingleContent>();
 
     private JingleContentInfo contentInfo;
@@ -65,7 +63,6 @@ public class Jingle extends IQ {
      */
     public Jingle(final List<JingleContent> contents, final JingleContentInfo mi,
                   final String sid) {
-        super();
 
         if (contents != null) {
             contents.addAll(contents);
@@ -86,8 +83,6 @@ public class Jingle extends IQ {
      * @param content a content
      */
     public Jingle(final JingleContent content) {
-        super();
-
         addContent(content);
 
         // Set null all other fields in the packet
@@ -105,8 +100,6 @@ public class Jingle extends IQ {
      * @param info The content info
      */
     public Jingle(final JingleContentInfo info) {
-        super();
-
         setContentInfo(info);
 
         // Set null all other fields in the packet
@@ -172,25 +165,6 @@ public class Jingle extends IQ {
     public String getSid() {
 
         return sid;
-    }
-
-    /**
-     * Returns the XML element name of the extension sub-packet root element.
-     * Always returns "jingle"
-     *
-     * @return the XML element name of the packet extension.
-     */
-    public static String getElementName() {
-        return NODENAME;
-    }
-
-    /**
-     * Returns the XML namespace of the extension sub-packet root element.
-     *
-     * @return the XML namespace of the packet extension.
-     */
-    public static String getNamespace() {
-        return NAMESPACE;
     }
 
     /**
@@ -337,37 +311,28 @@ public class Jingle extends IQ {
      *
      * @return the XML string
      */
-    public String getChildElementXML() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append("<").append(getElementName());
-        buf.append(" xmlns=\"").append(getNamespace()).append("\"");
-        if (getInitiator() != null) {
-            buf.append(" initiator=\"").append(getInitiator()).append("\"");
-        }
-        if (getResponder() != null) {
-            buf.append(" responder=\"").append(getResponder()).append("\"");
-        }
-        if (getAction() != null) {
-            buf.append(" action=\"").append(getAction()).append("\"");
-        }
-        if (getSid() != null) {
-            buf.append(" sid=\"").append(getSid()).append("\"");
-        }
-        buf.append(">");
+    @Override
+    public XmlStringBuilder getChildElementXML() {
+        XmlStringBuilder xml = new XmlStringBuilder();
+        xml.prelude(ELEMENT, NAMESPACE);
+        xml.optAttribute("initiator", getInitiator());
+        xml.optAttribute("responder", getResponder());
+        xml.optAttribute("action", getAction());
+        xml.optAttribute("sid", getSid());
+        xml.rightAngleBracket();
  
         synchronized (contents) {
             for (JingleContent content : contents) {
-                buf.append(content.toXML());
+                xml.append(content.toXML());
             }
          }
 
         // and the same for audio jmf info
         if (contentInfo != null) {
-            buf.append(contentInfo.toXML());
+            xml.append(contentInfo.toXML());
         }
 
-        buf.append("</").append(getElementName()).append(">");
-        return buf.toString();
+        xml.closeElement(ELEMENT);
+        return xml;
     }
 }

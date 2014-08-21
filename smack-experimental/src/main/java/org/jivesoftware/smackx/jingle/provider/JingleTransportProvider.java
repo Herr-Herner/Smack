@@ -20,8 +20,8 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smackx.jingle.packet.JingleTransport;
 import org.jivesoftware.smackx.jingle.packet.JingleTransport.JingleTransportCandidate;
-import org.jivesoftware.smackx.jingleold.nat.ICECandidate;
-import org.jivesoftware.smackx.jingleold.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingle.nat.ICECandidate;
+import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
 import org.xmlpull.v1.XmlPullParser;
 
 /**

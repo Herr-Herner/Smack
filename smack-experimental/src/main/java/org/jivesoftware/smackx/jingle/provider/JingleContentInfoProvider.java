@@ -19,7 +19,7 @@ package org.jivesoftware.smackx.jingle.provider;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smackx.jingle.packet.JingleContentInfo;
-import org.jivesoftware.smackx.jingleold.media.ContentInfo;
+import org.jivesoftware.smackx.jingle.packet.ContentInfo;
 import org.xmlpull.v1.XmlPullParser;
 
 /**

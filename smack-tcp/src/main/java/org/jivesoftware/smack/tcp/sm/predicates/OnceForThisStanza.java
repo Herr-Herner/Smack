@@ -35,7 +35,7 @@ public class OnceForThisStanza implements PacketFilter {
         this.connection = connection;
         this.id = packet.getPacketID();
         if (StringUtils.isNullOrEmpty(id)) {
-            throw new IllegalArgumentException("ID must been set");
+            throw new IllegalArgumentException("Stanza ID must be set");
         }
     }
 

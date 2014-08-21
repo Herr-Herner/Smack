@@ -51,7 +51,6 @@ public class Bind extends IQ {
         return jid;
     }
 
-
     public static Bind newSet(String resource) {
         Bind bind = new Bind(resource, null);
         bind.setType(IQ.Type.set);

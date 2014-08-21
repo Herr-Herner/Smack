@@ -23,4 +23,8 @@ public class Predicate {
     public static PacketFilter forMessagesOrAfter5Stanzas() {
         return new ForMatchingPredicateOrAfterXStanzas(ForEveryMessage.INSTANCE, 5);
     }
+
+    public static AfterXStanzas after5Stanzas() {
+        return new AfterXStanzas(5);
+    }
 }

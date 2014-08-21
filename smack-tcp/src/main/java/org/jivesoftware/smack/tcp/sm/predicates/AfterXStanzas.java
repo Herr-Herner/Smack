@@ -42,8 +42,4 @@ public class AfterXStanzas implements PacketFilter {
     public synchronized void resetCounter() {
         currentCount = 0;
     }
-
-    public static AfterXStanzas whereXisFive() {
-        return new AfterXStanzas(5);
-    }
 }

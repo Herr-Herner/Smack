@@ -1360,7 +1360,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                         if (isSmEnabled() && packet instanceof Packet) {
                             // If the unacknowledgedStanza queue is full, request an new ack from
                             // the server in order to drain it
-                            if (unacknowledgedStanzas.size() >= XMPPTCPConnection.QUEUE_SIZE) {
+                            if (unacknowledgedStanzas.size() == 0.8 * XMPPTCPConnection.QUEUE_SIZE) {
                                 writer.write(AckRequest.INSTANCE.toXML().toString());
                                 writer.flush();
                             }

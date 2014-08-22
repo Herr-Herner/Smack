@@ -1421,7 +1421,6 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                     // Do nothing
                 }
 
-                shutdownDone.reportSuccess();
             }
             catch (Exception e) {
                 // The exception can be ignored if the the connection is 'done'
@@ -1431,6 +1430,8 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 } else {
                     LOGGER.log(Level.FINE, "Ignoring Exception in writePackets()", e);
                 }
+            } finally {
+                shutdownDone.reportSuccess();
             }
         }
 

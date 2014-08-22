@@ -519,13 +519,13 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         // If we are able to resume the stream, then don't set
         // connected/authenticated/usingTLS to false since we like behave like we are still
         // connected (e.g. sendPacket should not throw a NotConnectedException).
-        if (!isSmResumptionPossible()) {
+        if (isSmResumptionPossible() && instant) {
+            disconnectedButResumeable = true;
+        } else {
             authenticated = false;
             connected = false;
             usingTLS = false;
             disconnectedButResumeable = false;
-        } else {
-            disconnectedButResumeable = true;
         }
         reader = null;
         writer = null;

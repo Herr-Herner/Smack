@@ -56,6 +56,7 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.tcp.sm.SMUtils;
 import org.jivesoftware.smack.tcp.sm.StreamManagementException;
 import org.jivesoftware.smack.tcp.sm.StreamManagementException.StreamManagementNotEnabledException;
+import org.jivesoftware.smack.tcp.sm.StreamManagementException.StreamIdDoesNotMatchException;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.AckAnswer;
 import org.jivesoftware.smack.tcp.sm.packet.StreamManagement.AckRequest;
@@ -1179,7 +1180,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                         case Resumed.ELEMENT:
                             Resumed resumed = ParseStreamManagement.resumed(parser);
                             if (!smSessionId.equals(resumed.getPrevId())) {
-                                throw new IllegalStateException("Session ID does not match previd of 'resumed' stanza");
+                                throw new StreamIdDoesNotMatchException(smSessionId, resumed.getPrevId());
                             }
                             // First, drop the stanzas already handled by the server
                             processHandledCount(resumed.getHandledCount());

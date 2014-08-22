@@ -20,6 +20,13 @@ import org.jivesoftware.smack.SmackException;
 
 public abstract class StreamManagementException extends SmackException {
 
+    public StreamManagementException() {
+    }
+
+    public StreamManagementException(String message) {
+        super(message);
+    }
+
     /**
      * 
      */
@@ -32,6 +39,18 @@ public abstract class StreamManagementException extends SmackException {
          */
         private static final long serialVersionUID = 2624821584352571307L;
 
+    }
+
+    public static class StreamIdDoesNotMatchException extends StreamManagementException {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1191073341336559621L;
+
+        public StreamIdDoesNotMatchException(String expected, String got) {
+            super("Stream IDs do not match. Expected '" + expected + "', but got '" + got + "'");
+        }
     }
 }
 

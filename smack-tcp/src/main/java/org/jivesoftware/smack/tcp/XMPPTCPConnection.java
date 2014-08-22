@@ -644,8 +644,11 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
 
         }
         catch (SmackException ex) {
-            // An exception occurred in setting up the connection.
-            shutdown();
+            // An exception occurred in setting up the connection. Note that
+            // it's important here that we do an instant shutdown here, as this
+            // will not send a closing stream element, which will destroy
+            // Stream Management state on the server, which is not what we want.
+            instantShutdown();
             // Everything stopped. Now throw the exception.
             throw ex;
         }

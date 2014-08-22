@@ -1138,7 +1138,13 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                             Enabled enabled = ParseStreamManagement.enabled(parser);
                             if (enabled.isResumeSet()) {
                                 smSessionId = enabled.getId();
-                                assert(StringUtils.isNotEmpty(smSessionId));
+                                if (StringUtils.isNullOrEmpty(smSessionId)) {
+                                    smEnabledSyncPoint.reportFailure(new XMPPErrorException(
+                                                    "Stream Management 'enabled' element with resume attribute but without session id received",
+                                                    new XMPPError(
+                                                                    XMPPError.Condition.bad_request)));
+                                    break;
+                                }
                                 smServerMaxResumptimTime = enabled.getMaxResumptionTime();
                             } else {
                                 // Mark this a aon-resumable stream by setting smSessionId to null
@@ -1561,7 +1567,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
             Packet ackedStanza = unacknowledgedStanzas.poll();
             // If the server ack'ed a stanza, then it must be in the
             // unacknowledged stanza queue. There can be no exception.
-            assert (ackedStanza != null);
+            assert(ackedStanza != null);
             ackedStanzas.add(ackedStanza);
         }
         for (Packet ackedStanza : ackedStanzas) {

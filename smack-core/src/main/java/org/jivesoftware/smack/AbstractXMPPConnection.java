@@ -1048,8 +1048,14 @@ public abstract class AbstractXMPPConnection implements XMPPConnection {
                     addStreamFeature(Session.Feature.INSTANCE);
                     break;
                 case RosterVer.ELEMENT:
-                    assert (namespace.equals(RosterVer.NAMESPACE));
-                    addStreamFeature(RosterVer.INSTANCE);
+                    if(namespace.equals(RosterVer.NAMESPACE)) {
+                        addStreamFeature(RosterVer.INSTANCE);
+                    }
+                    else {
+                        LOGGER.severe("Unkown Roster Versioning Namespace: "
+                                        + namespace
+                                        + ". Roster versioning not enabled");
+                    }
                     break;
                 case Compress.Feature.ELEMENT:
                     Compress.Feature compression = PacketParserUtils.parseCompressionFeature(parser);

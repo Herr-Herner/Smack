@@ -1143,11 +1143,12 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                             if (enabled.isResumeSet()) {
                                 smSessionId = enabled.getId();
                                 if (StringUtils.isNullOrEmpty(smSessionId)) {
-                                    smEnabledSyncPoint.reportFailure(new XMPPErrorException(
+                                    XMPPErrorException xmppException = new XMPPErrorException(
                                                     "Stream Management 'enabled' element with resume attribute but without session id received",
                                                     new XMPPError(
-                                                                    XMPPError.Condition.bad_request)));
-                                    break;
+                                                                    XMPPError.Condition.bad_request));
+                                    smEnabledSyncPoint.reportFailure(xmppException);
+                                    throw xmppException;
                                 }
                                 smServerMaxResumptimTime = enabled.getMaxResumptionTime();
                             } else {

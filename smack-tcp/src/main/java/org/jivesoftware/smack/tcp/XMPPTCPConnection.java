@@ -1042,12 +1042,12 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                 if (callback != null) {
                                     callback.handleUnparsablePacket(message);
                                 }
-                                clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
                                 continue;
+                            } finally {
+                                clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
+                                reportStanzaReceived();
                             }
-                            clientHandledStanzasCount = SMUtils.incrementHeight(clientHandledStanzasCount);
                             processPacket(packet);
-                            reportStanzaReceived();
                             break;
                         case "stream":
                             // We found an opening stream.

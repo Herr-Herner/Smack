@@ -1170,7 +1170,9 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                 smResumedSyncPoint.reportFailure(xmppException);
                             }
                             else {
-                                assert(smEnabledSyncPoint.requestSent());
+                                if (!smEnabledSyncPoint.requestSent()) {
+                                    throw new IllegalStateException("Failed element received but SM was not previously enabled");
+                                }
                                 smEnabledSyncPoint.reportFailure(xmppException);
                                 // Report success for last lastFeaturesReceived so that in case a
                                 // failed resumption, we can continue with normal resource binding.
@@ -1196,7 +1198,6 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                             LOGGER.fine("Stream Management (XEP-198): Stream resumed");
                             break;
                         case AckAnswer.ELEMENT:
-                            assert(smEnabledSyncPoint.wasSuccessful() && isSmAvailable());
                             AckAnswer ackAnswer = ParseStreamManagement.ackAnswer(parser);
                             processHandledCount(ackAnswer.getHandledCount());
                             break;
@@ -1267,7 +1268,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 // It's possible that there are new stanzas in the writer queue that
                 // came in while we were disconnected but resumable, drain those into
                 // the unacknowledged queue so that they get resent now
-                // TODO not sure if this is really required: If we are disconnect but resumeable,
+                // TODO not sure if this is really required: If we are disconnect but resumable,
                 // then the packetWriter thread should not run, which means that stanzas added to
                 // the queue will be added to the unack'ed queue as soon as the new packetWriter
                 // thread is started.
@@ -1355,16 +1356,13 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 while (!done()) {
                     StreamElement packet = nextStreamElement();
                     if (packet != null) {
-                        // TODO Must we ensure that stanzas are not send if we are connected but not
-                        // yet authenticated?
-
                         // Check if the stream element should be put to the unacknowledgedStanza
                         // queue. Note that we can not do the put() in sendPacketInternal() and the
                         // packet order is not stable at this point (sendPacketInternal() can be
                         // called concurrently).
                         if (isSmEnabled() && packet instanceof Packet) {
-                            // If the unacknowledgedStanza queue is full, request an new ack from
-                            // the server in order to drain it
+                            // If the unacknowledgedStanza queue is nearly full, request an new ack
+                            // from the server in order to drain it
                             if (unacknowledgedStanzas.size() == 0.8 * XMPPTCPConnection.QUEUE_SIZE) {
                                 writer.write(AckRequest.INSTANCE.toXML().toString());
                                 writer.flush();

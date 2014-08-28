@@ -19,6 +19,8 @@ package org.jivesoftware.smack;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
@@ -26,6 +28,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.StreamElement;
 
 public class SynchronizationPoint<E extends Exception> {
+
+    private static final Logger LOGGER = Logger.getLogger(SynchronizationPoint.class.getName());
 
     private final AbstractXMPPConnection connection;
     private final Lock connectionLock;
@@ -42,13 +46,13 @@ public class SynchronizationPoint<E extends Exception> {
     }
 
     public void init() {
-        state = State.NoResponse;
+        state = State.Initial;
         failureException = null;
     }
 
     public void sendAndWaitForResponse(StreamElement request) throws NoResponseException,
                     NotConnectedException {
-        assert (state == State.NoResponse);
+        assert (state == State.Initial);
         connectionLock.lock();
         try {
             if (request != null) {
@@ -139,16 +143,24 @@ public class SynchronizationPoint<E extends Exception> {
     }
 
     private void waitForConditionOrTimeout() {
-        try {
-            condition.await(connection.getPacketReplyTimeout(), TimeUnit.MILLISECONDS);
-        }
-        catch (InterruptedException e) {
-            // TODO
+        long remainingWait = TimeUnit.MILLISECONDS.toNanos(connection.getPacketReplyTimeout());
+        while (state == State.RequestSent || state == State.Initial) {
+            try {
+                remainingWait = condition.awaitNanos(
+                                remainingWait);
+                if (remainingWait <= 0) {
+                    state = State.NoResponse;
+                    break;
+                }
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.FINE, "was interrupted while waiting, this should not happen", e);
+            }
         }
     }
 
     private void maybeThrowNoResponseException() throws NoResponseException {
         switch (state) {
+        case Initial:
         case NoResponse:
         case RequestSent:
             throw new NoResponseException();
@@ -159,9 +171,10 @@ public class SynchronizationPoint<E extends Exception> {
     }
 
     private enum State {
+        Initial,
+        RequestSent,
         Success,
         Failure,
-        RequestSent,
         NoResponse
     }
 }

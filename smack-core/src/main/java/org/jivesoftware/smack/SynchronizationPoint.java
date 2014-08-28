@@ -173,8 +173,8 @@ public class SynchronizationPoint<E extends Exception> {
     private enum State {
         Initial,
         RequestSent,
+        NoResponse,
         Success,
         Failure,
-        NoResponse
     }
 }

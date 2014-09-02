@@ -274,14 +274,14 @@ public class EntityCapsManager extends Manager {
                 // It's not clear when a server would report the caps stream
                 // feature, so we try to process it after we are connected and
                 // once after we are authenticated.
-                maybeProcessCapsStreamFeature(connection);
+                processCapsStreamFeatureIfAvailable(connection);
             }
             @Override
             public void authenticated(XMPPConnection connection) {
                 // It's not clear when a server would report the caps stream
                 // feature, so we try to process it after we are connected and
                 // once after we are authenticated.
-                maybeProcessCapsStreamFeature(connection);
+                processCapsStreamFeatureIfAvailable(connection);
             }
             @Override
             public void connectionClosed() {
@@ -292,7 +292,7 @@ public class EntityCapsManager extends Manager {
                 presenceSend = false;
             }
 
-            private void maybeProcessCapsStreamFeature(XMPPConnection connection) {
+            private void processCapsStreamFeatureIfAvailable(XMPPConnection connection) {
                 CapsExtension capsExtension = connection.getFeature(
                                 CapsExtension.ELEMENT, CapsExtension.NAMESPACE);
                 if (capsExtension == null) {

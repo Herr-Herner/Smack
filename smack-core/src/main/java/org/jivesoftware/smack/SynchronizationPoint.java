@@ -69,7 +69,7 @@ public class SynchronizationPoint<E extends Exception> {
         finally {
             connectionLock.unlock();
         }
-        maybeThrowNoResponseException();
+        checkForResponse();
     }
 
     public void sendAndWaitForResponseOrThrow(StreamElement request) throws E, NoResponseException,
@@ -104,7 +104,7 @@ public class SynchronizationPoint<E extends Exception> {
         } finally {
             connectionLock.unlock();
         }
-        maybeThrowNoResponseException();
+        checkForResponse();
     }
 
     public void reportSuccess() {
@@ -158,7 +158,14 @@ public class SynchronizationPoint<E extends Exception> {
         }
     }
 
-    private void maybeThrowNoResponseException() throws NoResponseException {
+    /**
+     * Check for a response and throw a {@link NoResponseException} if there was none.
+     * <p>
+     * The exception is thrown, if state is one of 'Initial', 'NoResponse' or 'RequestSent'
+     * </p>
+     * @throws NoResponseException
+     */
+    private void checkForResponse() throws NoResponseException {
         switch (state) {
         case Initial:
         case NoResponse:

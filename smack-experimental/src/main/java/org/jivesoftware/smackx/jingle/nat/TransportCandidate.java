@@ -17,7 +17,6 @@
 package org.jivesoftware.smackx.jingle.nat;
 
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import org.jivesoftware.smack.XMPPConnection;
 
@@ -31,8 +30,6 @@ import org.jivesoftware.smack.XMPPConnection;
  * @author Alvaro Saurin
  */
 public abstract class TransportCandidate {
-
-	private static final Logger LOGGER = Logger.getLogger(TransportCandidate.class.getName());
 
 	private String name;
 

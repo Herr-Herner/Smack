@@ -29,20 +29,11 @@ import org.xmlpull.v1.XmlPullParser;
 public class JingleContentProvider implements PacketExtensionProvider {
 
     /**
-     * Creates a new provider. ProviderManager requires that every
-     * PacketExtensionProvider has a public, no-argument constructor
-     */
-    public JingleContentProvider() {
-        super();
-    }
-
-    /**
      * Parse a JingleContent extension.
      */
     public PacketExtension parseExtension(final XmlPullParser parser) throws Exception {
         PacketExtension result = null;
 
-        String elementName = parser.getName();
         String creator = parser.getAttributeValue("", JingleContent.CREATOR);
         String name = parser.getAttributeValue("", JingleContent.NAME);
 

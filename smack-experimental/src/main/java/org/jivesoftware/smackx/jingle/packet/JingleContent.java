@@ -37,7 +37,7 @@ public class JingleContent implements PacketExtension {
     private String creator;
     private String name;
 
-    private JingleDescription description;
+    private JingleContentDescription description;
     private final List<JingleTransport> transports = new ArrayList<JingleTransport>();
 
     /**
@@ -82,7 +82,7 @@ public class JingleContent implements PacketExtension {
      * @param description
      *            The description
      */
-    public void setDescription(JingleDescription description) {
+    public void setDescription(JingleContentDescription description) {
         this.description = description;
     }
 
@@ -91,7 +91,7 @@ public class JingleContent implements PacketExtension {
      * 
      * @return The description.
      */
-    public JingleDescription getDescription() {
+    public JingleContentDescription getDescription() {
         return description;
     }
 

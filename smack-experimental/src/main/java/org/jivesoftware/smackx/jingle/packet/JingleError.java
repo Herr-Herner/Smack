@@ -20,8 +20,6 @@ package org.jivesoftware.smackx.jingle.packet;
 import java.util.Locale;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
-import org.xmlpull.v1.XmlPullParser;
 
 public class JingleError implements PacketExtension {
 
@@ -121,35 +119,35 @@ public class JingleError implements PacketExtension {
 		return NAMESPACE;
 	}
 
-    public static class Provider implements PacketExtensionProvider {
-
-           private PacketExtension audioInfo;
-
-           /**
-            * Empty constructor.
-            */
-           public Provider() {
-           }
-
-           /**
-            * Parse a JingleDescription.Audio extension.
-            */
-           public PacketExtension parseExtension(final XmlPullParser parser)
-                   throws Exception {
-               PacketExtension result = null;
-
-               if (audioInfo != null) {
-                   result = audioInfo;
-               } else {
-                   String elementName = parser.getName();
-
-                   // Try to get an Audio content info
-                   ContentInfo mi = ContentInfo.Audio.fromString(elementName);
-                   if (mi != null) {
-                       result = new JingleContentInfo.Audio(mi);
-                   }
-               }
-               return result;
-           }
-    }
+//    public static class Provider implements PacketExtensionProvider {
+//
+//           private PacketExtension audioInfo;
+//
+//           /**
+//            * Empty constructor.
+//            */
+//           public Provider() {
+//           }
+//
+//           /**
+//            * Parse a JingleDescription.Audio extension.
+//            */
+//           public PacketExtension parseExtension(final XmlPullParser parser)
+//                   throws Exception {
+//               PacketExtension result = null;
+//
+//               if (audioInfo != null) {
+//                   result = audioInfo;
+//               } else {
+//                   String elementName = parser.getName();
+//
+//                   // Try to get an Audio content info
+//                   ContentInfo mi = ContentInfo.Audio.fromString(elementName);
+//                   if (mi != null) {
+//                       result = new JingleContent.Audio(mi);
+//                   }
+//               }
+//               return result;
+//           }
+//    }
 }

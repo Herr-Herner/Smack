@@ -8,20 +8,20 @@ Jingle Element Structure
 
 ```
 jingle
-│  action
-│  initator
-│  responder
-│  sid
+│  action (REQUIRED)
+│  initator (RECOMMENDED for session initiate, NOT RECOMMENDED otherwise)
+│  responder (RECOMMENDED for session accept, NOT RECOMMENDED otherwise)
+│  sid (REQUIRED)
 │
 ├──reason
 │  │
 │  └──(alternative─session│busy│..)
 │
 └──content
-   │  creator
-   │  dispos
-   │  name
-   │  sender
+   │  creator (REQUIRED)
+   │  disposition (OPTIONAL)
+   │  name (REQUIRED)
+   │  senders (OPTIONAL, except when content-modify then REQUIRED)
    │
    ├──description
    │  │  media

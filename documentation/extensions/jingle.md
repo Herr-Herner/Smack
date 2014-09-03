@@ -6,6 +6,7 @@ Jingle
 Jingle Element Structure
 ------------------------
 
+```
 jingle
 │  action
 │  initator
@@ -48,3 +49,4 @@ jingle
             priority
             protocol
             type
+```

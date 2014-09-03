@@ -20,8 +20,7 @@ import java.math.BigInteger;
 
 public class SMUtils {
 
-    private static long TWO_POWER_THIRTYTWO = BigInteger.ONE.shiftLeft(32).longValue();
-    private static long TWO_POWER_THIRTYTWO_MINUS_ONE = TWO_POWER_THIRTYTWO - 1;
+    private static long MASK_32_BIT = BigInteger.ONE.shiftLeft(32).subtract(BigInteger.ONE).longValue();
 
     /**
      * Quoting XEP-198 4.:
@@ -33,11 +32,7 @@ public class SMUtils {
      * @return the incremented height
      */
     public static long incrementHeight(long height) {
-        height++;
-        if (height == TWO_POWER_THIRTYTWO) {
-            height = 0;
-        }
-        return height;
+        return ++height & MASK_32_BIT;
     }
 
     /**
@@ -50,10 +45,6 @@ public class SMUtils {
      * @return the delta
      */
     public static long calculateDelta(long reportedHandledCount, long lastKnownHandledCount) {
-        if (reportedHandledCount >= lastKnownHandledCount) {
-            // There was no overflow, we can safely subtract
-            return reportedHandledCount - lastKnownHandledCount;
-        }
-        return (TWO_POWER_THIRTYTWO_MINUS_ONE - lastKnownHandledCount) + reportedHandledCount;
+        return (reportedHandledCount - lastKnownHandledCount) & MASK_32_BIT;
     }
 }

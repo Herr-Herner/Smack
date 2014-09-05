@@ -55,7 +55,7 @@ import org.jivesoftware.smack.util.XmlStringBuilder;
  * @see RosterPacket
  * @author Matt Tucker
  */
-public class Presence extends Packet {
+public class Presence extends XmlLangStanza {
 
     public static final String ELEMENT = "presence";
 
@@ -63,7 +63,6 @@ public class Presence extends Packet {
     private String status = null;
     private int priority = Integer.MIN_VALUE;
     private Mode mode = null;
-    private String language;
 
     /**
      * Creates a new presence update. Status, priority, and mode are left un-set.
@@ -71,7 +70,6 @@ public class Presence extends Packet {
      * @param type the type.
      */
     public Presence(Type type) {
-        super();
         setType(type);
     }
 
@@ -84,7 +82,6 @@ public class Presence extends Packet {
      * @param mode the mode type for this presence update.
      */
     public Presence(Type type, String status, int priority, Mode mode) {
-        super();
         setType(type);
         setStatus(status);
         setPriority(priority);
@@ -206,32 +203,11 @@ public class Presence extends Packet {
         this.mode = mode;
     }
 
-    /**
-     * Returns the xml:lang of this Presence, or null if one has not been set.
-     *
-     * @return the xml:lang of this Presence, or null if one has not been set.
-     * @since 3.0.2
-     */
-    public String getLanguage() {
-        return language;
-    }
-
-    /**
-     * Sets the xml:lang of this Presence.
-     *
-     * @param language the xml:lang of this Presence.
-     * @since 3.0.2
-     */
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
     @Override
     public XmlStringBuilder toXML() {
         XmlStringBuilder buf = new XmlStringBuilder();
         buf.halfOpenElement(ELEMENT);
-        buf.xmlnsAttribute(getXmlns());
-        buf.xmllangAttribute(getLanguage());
+        buf.xmllangAttribute(language);
         addCommonAttributes(buf);
         if (type != Type.available) {
             buf.attribute("type", type);
@@ -311,7 +287,13 @@ public class Presence extends Packet {
         /**
          * The presence packet contains an error message.
          */
-        error;
+        error,
+
+        /**
+         * A presence probe as defined in section 4.3 of RFC 6121
+         */
+        probe,
+        ;
 
         /**
          * Converts a String into the corresponding types. Valid String values that can be converted

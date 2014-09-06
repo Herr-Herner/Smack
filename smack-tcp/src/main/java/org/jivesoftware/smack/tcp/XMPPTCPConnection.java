@@ -1268,10 +1268,6 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 // It's possible that there are new stanzas in the writer queue that
                 // came in while we were disconnected but resumable, drain those into
                 // the unacknowledged queue so that they get resent now
-                // TODO not sure if this is really required: If we are disconnect but resumable,
-                // then the packetWriter thread should not run, which means that stanzas added to
-                // the queue will be added to the unack'ed queue as soon as the new packetWriter
-                // thread is started.
                 drainWriterQueueToUnacknowledgedStanzas();
             }
 
@@ -1437,15 +1433,10 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         private void drainWriterQueueToUnacknowledgedStanzas() {
             List<StreamElement> elements = new ArrayList<StreamElement>(queue.size());
             queue.drainTo(elements);
-            Iterator<StreamElement> it = elements.iterator();
-            while (it.hasNext()) {
-                StreamElement element = it.next();
-                if (!(element instanceof Packet)) {
-                    it.remove();
-                }
-            }
             for (StreamElement element : elements) {
-                unacknowledgedStanzas.add((Packet) element);
+                if (element instanceof Packet) {
+                    unacknowledgedStanzas.add((Packet) element);
+                }
             }
         }
     }

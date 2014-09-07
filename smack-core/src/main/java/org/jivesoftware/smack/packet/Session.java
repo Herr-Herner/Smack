@@ -62,7 +62,7 @@ public class Session extends IQ {
         public String getNamespace() {
             return NAMESPACE;
         }
-            
+
         @Override
         public String toXML() {
             return SESSION;

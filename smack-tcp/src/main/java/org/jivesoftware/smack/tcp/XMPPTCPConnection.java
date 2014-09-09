@@ -39,6 +39,7 @@ import org.jivesoftware.smack.compress.packet.Compressed;
 import org.jivesoftware.smack.compression.XMPPInputOutputStream;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.compress.packet.Compress;
+import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.StreamOpen;
@@ -51,7 +52,7 @@ import org.jivesoftware.smack.sasl.packet.SaslStreamElements;
 import org.jivesoftware.smack.sasl.packet.SaslStreamElements.Challenge;
 import org.jivesoftware.smack.sasl.packet.SaslStreamElements.SASLFailure;
 import org.jivesoftware.smack.sasl.packet.SaslStreamElements.Success;
-import org.jivesoftware.smack.packet.StreamElement;
+import org.jivesoftware.smack.packet.PlainStreamElement;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.tcp.sm.SMUtils;
 import org.jivesoftware.smack.tcp.sm.StreamManagementException;
@@ -538,13 +539,13 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
     }
 
     @Override
-    protected void sendStreamElement(StreamElement element) throws NotConnectedException {
+    public void send(PlainStreamElement element) throws NotConnectedException {
         packetWriter.sendStreamElement(element);
     }
 
     @Override
     protected void sendPacketInternal(Packet packet) throws NotConnectedException {
-        sendStreamElement(packet);
+        packetWriter.sendStreamElement(packet);
         if (isSmEnabled()) {
             for (PacketFilter requestAckPredicate : requestAckPredicates) {
                 if (requestAckPredicate.accept(packet)) {
@@ -943,7 +944,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 // Do not secure the connection using TLS since TLS was disabled
                 return;
             }
-            sendStreamElement(new StartTls());
+            send(new StartTls());
         }
         // If TLS is required but the server doesn't offer it, disconnect
         // from the server and throw an error. First check if we've already negotiated TLS
@@ -969,7 +970,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
      * @throws SmackException if the parser could not be reset.
      */
     void openStream() throws SmackException {
-        sendStreamElement(new StreamOpen(getServiceName()));
+        send(new StreamOpen(getServiceName()));
         try {
             packetReader.parser = PacketParserUtils.newXmppParser(reader);
         }
@@ -1107,7 +1108,6 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                                 // SASL authentication has failed. The server may close the connection
                                 // depending on the number of retries
                                 final SASLFailure failure = PacketParserUtils.parseSASLFailure(parser);
-                                processPacket(failure);
                                 getSASLAuthentication().authenticationFailed(failure);
                                 break;
                             }
@@ -1115,12 +1115,10 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                         case Challenge.ELEMENT:
                             // The server is challenging the SASL authentication made by the client
                             String challengeData = parser.nextText();
-                            processPacket(new Challenge(challengeData));
                             getSASLAuthentication().challengeReceived(challengeData);
                             break;
                         case Success.ELEMENT:
                             Success success = new Success(parser.nextText());
-                            processPacket(success);
                             // We now need to bind a resource for the connection
                             // Open a new stream and wait for the response
                             openStream();
@@ -1238,7 +1236,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
     protected class PacketWriter {
         public static final int QUEUE_SIZE = XMPPTCPConnection.QUEUE_SIZE;
 
-        private final ArrayBlockingQueueWithShutdown<StreamElement> queue = new ArrayBlockingQueueWithShutdown<StreamElement>(
+        private final ArrayBlockingQueueWithShutdown<Element> queue = new ArrayBlockingQueueWithShutdown<Element>(
                         QUEUE_SIZE, true);
 
         private Thread writerThread;
@@ -1292,7 +1290,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
          * @param element the element to send.
          * @throws NotConnectedException 
          */
-        protected void sendStreamElement(StreamElement element) throws NotConnectedException {
+        protected void sendStreamElement(Element element) throws NotConnectedException {
             if (done() && !isSmResumptionPossible()) {
                 // Don't throw a NotConnectedException is there is an resumable stream available
                 throw new NotConnectedException();
@@ -1327,14 +1325,14 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
          *
          * @return the next element for writing.
          */
-        private StreamElement nextStreamElement() {
+        private Element nextStreamElement() {
             // TODO not sure if nextStreamElement and/or this done() condition still required.
             // Couldn't this be done in writePackets too?
             if (done()) {
                 return null;
             }
 
-            StreamElement packet = null;
+            Element packet = null;
             try {
                 packet = queue.take();
             }
@@ -1350,7 +1348,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                 initalOpenStreamSend.reportSuccess();
                 // Write out packets from the queue.
                 while (!done()) {
-                    StreamElement packet = nextStreamElement();
+                    Element packet = nextStreamElement();
                     if (packet != null) {
                         // Check if the stream element should be put to the unacknowledgedStanza
                         // queue. Note that we can not do the put() in sendPacketInternal() and the
@@ -1382,7 +1380,7 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
                     // closed by the shutdown process.
                     try {
                         while (!queue.isEmpty()) {
-                            StreamElement packet = queue.remove();
+                            Element packet = queue.remove();
                             writer.write(packet.toXML().toString());
                         }
                         writer.flush();
@@ -1431,9 +1429,9 @@ public class XMPPTCPConnection extends AbstractXMPPConnection {
         }
 
         private void drainWriterQueueToUnacknowledgedStanzas() {
-            List<StreamElement> elements = new ArrayList<StreamElement>(queue.size());
+            List<Element> elements = new ArrayList<Element>(queue.size());
             queue.drainTo(elements);
-            for (StreamElement element : elements) {
+            for (Element element : elements) {
                 if (element instanceof Packet) {
                     unacknowledgedStanzas.add((Packet) element);
                 }

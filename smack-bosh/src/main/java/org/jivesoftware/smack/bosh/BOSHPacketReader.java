@@ -20,7 +20,6 @@ package org.jivesoftware.smack.bosh;
 import java.io.StringReader;
 
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.sasl.packet.SaslStreamElements.Challenge;
 import org.jivesoftware.smack.sasl.packet.SaslStreamElements.SASLFailure;
 import org.jivesoftware.smack.sasl.packet.SaslStreamElements.Success;
 import org.jivesoftware.smack.util.PacketParserUtils;
@@ -86,8 +85,6 @@ public class BOSHPacketReader implements BOSHClientResponseListener {
                             final String challengeData = parser.nextText();
                             connection.getSASLAuthentication()
                                     .challengeReceived(challengeData);
-                            connection.processPacket(new Challenge(
-                                    challengeData));
                         } else if (parser.getName().equals("success")) {
                             connection.send(ComposableBody.builder()
                                     .setNamespaceDefinition("xmpp", XMPPBOSHConnection.XMPP_BOSH_NS)
@@ -100,14 +97,12 @@ public class BOSHPacketReader implements BOSHClientResponseListener {
                                     .build());
                             Success success = new Success(parser.nextText());
                             connection.getSASLAuthentication().authenticated(success);
-                            connection.processPacket(success);
                         } else if (parser.getName().equals("features")) {
                             parseFeatures(parser);
                         } else if (parser.getName().equals("failure")) {
                             if ("urn:ietf:params:xml:ns:xmpp-sasl".equals(parser.getNamespace(null))) {
                                 final SASLFailure failure = PacketParserUtils.parseSASLFailure(parser);
                                 connection.getSASLAuthentication().authenticationFailed(failure);
-                                connection.processPacket(failure);
                             }
                         } else if (parser.getName().equals("error")) {
                             throw new StreamErrorException(PacketParserUtils.parseStreamError(parser));

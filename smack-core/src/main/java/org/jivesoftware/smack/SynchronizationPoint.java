@@ -24,8 +24,9 @@ import java.util.logging.Logger;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.StreamElement;
+import org.jivesoftware.smack.packet.PlainStreamElement;
 
 public class SynchronizationPoint<E extends Exception> {
 
@@ -50,7 +51,7 @@ public class SynchronizationPoint<E extends Exception> {
         failureException = null;
     }
 
-    public void sendAndWaitForResponse(StreamElement request) throws NoResponseException,
+    public void sendAndWaitForResponse(Element request) throws NoResponseException,
                     NotConnectedException {
         assert (state == State.Initial);
         connectionLock.lock();
@@ -59,8 +60,10 @@ public class SynchronizationPoint<E extends Exception> {
                 if (request instanceof Packet) {
                     connection.sendPacket((Packet) request);
                 }
-                else {
-                    connection.sendStreamElement(request);
+                else if (request instanceof PlainStreamElement){
+                    connection.send((PlainStreamElement) request);
+                } else {
+                    throw new IllegalStateException("Unsupported element type");
                 }
                 state = State.RequestSent;
             }
@@ -72,7 +75,7 @@ public class SynchronizationPoint<E extends Exception> {
         checkForResponse();
     }
 
-    public void sendAndWaitForResponseOrThrow(StreamElement request) throws E, NoResponseException,
+    public void sendAndWaitForResponseOrThrow(PlainStreamElement request) throws E, NoResponseException,
                     NotConnectedException {
         sendAndWaitForResponse(request);
         switch (state) {

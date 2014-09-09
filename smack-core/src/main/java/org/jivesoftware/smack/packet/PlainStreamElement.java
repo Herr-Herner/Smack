@@ -18,15 +18,17 @@
 package org.jivesoftware.smack.packet;
 
 /**
- * Interface to represent a XML element. This is similar to {@link PacketExtension}, but does not
- * carry a namespace and is usually included as child element of an packet extension.
+ * Plain stream elements, ie. everything that is <b>not a stanza</b> as defined
+ * RFC 6120 8. Stanzas are {@link Message}, {@link Presence} and {@link IQ}.
+ * Everything else should sublcass this class instead of {@link Packet}.
+ * <p>
+ * It is important to cleanly distinguish between stanzas and non-stanzas. For
+ * example plain stream elements don't count into the stanza count of XEP-198
+ * Stream Management.
+ * </p>
+ * 
+ * @author Florian Schmaus
  */
-public interface Element {
+public abstract class PlainStreamElement implements Element {
 
-    /**
-     * Returns the XML representation of this Element.
-     *
-     * @return the packet extension as XML.
-     */
-    public CharSequence toXML();
 }

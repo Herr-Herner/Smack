@@ -24,6 +24,7 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.PlainStreamElement;
 import org.jivesoftware.smack.rosterstore.RosterStore;
 
 /**
@@ -151,6 +152,13 @@ public interface XMPPConnection {
      * @throws NotConnectedException 
      */
     public void sendPacket(Packet packet) throws NotConnectedException;
+
+    /**
+     * 
+     * @param element
+     * @throws NotConnectedException
+     */
+    public void  send(PlainStreamElement element) throws NotConnectedException;
 
     /**
      * Returns the roster for the user.
@@ -468,4 +476,5 @@ public interface XMPPConnection {
      * @return the timestamp in milliseconds
      */
     public long getLastStanzaReceived();
+
 }

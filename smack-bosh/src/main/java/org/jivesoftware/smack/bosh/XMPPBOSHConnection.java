@@ -38,10 +38,11 @@ import org.jivesoftware.smack.ConnectionCreationListener;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PlainStreamElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
-import org.jivesoftware.smack.packet.StreamElement;
 import org.xmlpull.v1.XmlPullParser;
 import org.igniterealtime.jbosh.BOSHClient;
 import org.igniterealtime.jbosh.BOSHClientConfig;
@@ -292,21 +293,25 @@ public class XMPPBOSHConnection extends AbstractXMPPConnection {
     }
 
     @Override
-    protected void sendStreamElement(StreamElement element) throws NotConnectedException {
+    public void send(PlainStreamElement element) throws NotConnectedException {
         if (done) {
             throw new NotConnectedException();
         }
+        sendElement(element);
+    }
+
+    @Override
+    protected void sendPacketInternal(Packet packet) throws NotConnectedException {
+        sendElement(packet);
+    }
+
+    private void sendElement(Element element) {
         try {
             send(ComposableBody.builder().setPayloadXML(element.toXML().toString()).build());
         }
         catch (BOSHException e) {
             LOGGER.log(Level.SEVERE, "BOSHException in sendPacketInternal", e);
         }
-    }
-
-    @Override
-    protected void sendPacketInternal(Packet packet) throws NotConnectedException {
-        sendStreamElement(packet);
     }
 
     /**

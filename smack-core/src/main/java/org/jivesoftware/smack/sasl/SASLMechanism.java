@@ -181,7 +181,7 @@ public abstract class SASLMechanism implements Comparable<SASLMechanism> {
             authenticationText = "=";
         }
         // Send the authentication to the server
-        connection.sendPacket(new AuthMechanism(getName(), authenticationText));
+        connection.send(new AuthMechanism(getName(), authenticationText));
     }
 
     /**
@@ -218,7 +218,7 @@ public abstract class SASLMechanism implements Comparable<SASLMechanism> {
         }
 
         // Send the authentication to the server
-        connection.sendPacket(responseStanza);
+        connection.send(responseStanza);
     }
 
     protected byte[] evaluateChallenge(byte[] challenge) throws SmackException {

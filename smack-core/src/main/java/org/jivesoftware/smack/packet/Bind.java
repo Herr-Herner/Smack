@@ -71,7 +71,7 @@ public class Bind extends IQ {
         return xml;
     }
 
-    public static class Feature extends FullStreamElement {
+    public static class Feature implements PacketExtension {
 
         public static final Feature INSTANCE = new Feature();
 

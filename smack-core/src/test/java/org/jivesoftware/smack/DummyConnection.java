@@ -23,10 +23,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-
 import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.packet.Element;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.StreamElement;
+import org.jivesoftware.smack.packet.PlainStreamElement;
 
 /**
  * A dummy implementation of {@link XMPPConnection}, intended to be used during
@@ -54,7 +54,7 @@ public class DummyConnection extends AbstractXMPPConnection {
     private String connectionID;
     private Roster roster;
 
-    private final BlockingQueue<StreamElement> queue = new LinkedBlockingQueue<StreamElement>();
+    private final BlockingQueue<Element> queue = new LinkedBlockingQueue<Element>();
 
     public DummyConnection() {
 	this(new ConnectionConfiguration("example.com"));
@@ -180,7 +180,7 @@ public class DummyConnection extends AbstractXMPPConnection {
     }
 
     @Override
-    protected void sendStreamElement(StreamElement element) {
+    public void send(PlainStreamElement element) {
         if (SmackConfiguration.DEBUG_ENABLED) {
             System.out.println("[SEND]: " + element.toXML());
         }

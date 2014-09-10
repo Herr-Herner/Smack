@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.packet.Element;
+import org.jivesoftware.smack.packet.TopLevelStreamElement;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.PlainStreamElement;
 
@@ -51,7 +51,7 @@ public class SynchronizationPoint<E extends Exception> {
         failureException = null;
     }
 
-    public void sendAndWaitForResponse(Element request) throws NoResponseException,
+    public void sendAndWaitForResponse(TopLevelStreamElement request) throws NoResponseException,
                     NotConnectedException {
         assert (state == State.Initial);
         connectionLock.lock();

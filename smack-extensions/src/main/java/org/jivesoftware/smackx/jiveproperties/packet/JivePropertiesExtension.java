@@ -175,11 +175,10 @@ public class JivePropertiesExtension implements PacketExtension {
             // a binary format, which won't work well inside of XML. Therefore, we base-64
             // encode the binary data before adding it.
             else {
-                ByteArrayOutputStream byteStream = null;
-                ObjectOutputStream out = null;
-                try {
-                    byteStream = new ByteArrayOutputStream();
-                    out = new ObjectOutputStream(byteStream);
+                try (
+                    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(byteStream);
+                    ) {
                     out.writeObject(value);
                     type = "java-object";
                     valueStr = Base64.encodeToString(byteStream.toByteArray());
@@ -188,24 +187,6 @@ public class JivePropertiesExtension implements PacketExtension {
                     LOGGER.log(Level.SEVERE, "Error encoding java object", e);
                     type = "java-object";
                     valueStr = "Serializing error: " + e.getMessage();
-                }
-                finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        }
-                        catch (Exception e) {
-                            // Ignore.
-                        }
-                    }
-                    if (byteStream != null) {
-                        try {
-                            byteStream.close();
-                        }
-                        catch (Exception e) {
-                            // Ignore.
-                        }
-                    }
                 }
             }
             xml.attribute("type", type);

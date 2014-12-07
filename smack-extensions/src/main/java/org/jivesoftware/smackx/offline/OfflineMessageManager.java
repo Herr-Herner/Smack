@@ -153,8 +153,7 @@ public class OfflineMessageManager {
                 return nodes.contains(info.getNode());
             }
         });
-        PacketCollector messageCollector = connection.createPacketCollector(messageFilter);
-        try {
+        try (PacketCollector messageCollector = connection.createPacketCollector(messageFilter)) {
             connection.createPacketCollectorAndSend(request).nextResultOrThrow();
             // Collect the received offline messages
             Message message = messageCollector.nextResult();
@@ -162,10 +161,6 @@ public class OfflineMessageManager {
                 messages.add(message);
                 message = messageCollector.nextResult();
             }
-        }
-        finally {
-            // Stop queuing offline messages
-            messageCollector.cancel();
         }
         return messages;
     }
@@ -186,10 +181,10 @@ public class OfflineMessageManager {
         OfflineMessageRequest request = new OfflineMessageRequest();
         request.setFetch(true);
 
-        PacketCollector messageCollector = connection.createPacketCollector(PACKET_FILTER);
-        PacketCollector resultCollector = connection.createPacketCollectorAndSend(request);
-
-        try {
+        try (
+            PacketCollector messageCollector = connection.createPacketCollector(PACKET_FILTER);
+            PacketCollector resultCollector = connection.createPacketCollectorAndSend(request);
+            ) {
             // Collect the received offline messages
             Message message = messageCollector.nextResult();
             while (message != null) {
@@ -208,10 +203,6 @@ public class OfflineMessageManager {
                 message = messageCollector.nextResult();
             }
             resultCollector.nextResultOrThrow();
-        }
-        finally {
-            messageCollector.cancel();
-            resultCollector.cancel();
         }
         return messages;
     }

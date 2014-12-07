@@ -41,7 +41,7 @@ import org.jivesoftware.smack.packet.Packet;
  * @see XMPPConnection#createPacketCollector(PacketFilter)
  * @author Matt Tucker
  */
-public class PacketCollector {
+public class PacketCollector implements AutoCloseable {
 
     private static final Logger LOGGER = Logger.getLogger(PacketCollector.class.getName());
 
@@ -235,5 +235,10 @@ public class PacketCollector {
         		resultQueue.poll();
         	}
         }
+    }
+
+    @Override
+    public void close() {
+        cancel();
     }
 }
